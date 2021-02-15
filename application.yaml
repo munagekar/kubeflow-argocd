@@ -11,14 +11,14 @@ spec:
     server: https://kubernetes.default.svc
   source:
     path: "."
-    repoURL: ssh://git@github.com:munagekar/kubeflow-argocd.git
+    repoURL: https://github.com/munagekar/kubeflow-argocd.git
     targetRevision: master
     helm:
       parameters:
         # as this is an app-of-apps, and the inner-apps are also in the same repo
         # we ensure all repos/target_revisions are the same, by passing them here
         - name: argo.app_of_apps.repo.url
-          value: ssh://git@github.com:munagekar/kubeflow-argocd.git
+          value: https://github.com/munagekar/kubeflow-argocd.git
         - name: argo.app_of_apps.repo.target_revision
           value: master
         # similar to the repo values: we pass the name of this app, so it can be used in the name of the child apps
