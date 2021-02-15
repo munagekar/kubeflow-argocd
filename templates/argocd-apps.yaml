@@ -1,0 +1,36 @@
+{{ $search_path := printf "build/kustomize/*/kustomization.yaml" }}
+{{- range $file_path, $bytes := .Files.Glob $search_path }}
+{{- $folder_path := dir $file_path }}
+{{- $chart_name := base $folder_path }}
+{{- $kustomize_yaml := $.Files.Get $file_path | fromYaml }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $.Values.argo.app_of_apps.name }}--{{ $chart_name }}
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: {{ $kustomize_yaml.namespace | default "kubeflow" }}
+    server: https://kubernetes.default.svc
+  source:
+    path: {{ $folder_path | quote }}
+    repoURL: {{ $.Values.argo.app_of_apps.repo.url | quote }}
+    targetRevision: {{ $.Values.argo.app_of_apps.repo.target_revision | quote }}
+  project: default
+  ignoreDifferences:
+    # kubeflow has many empty `/descriptor` fields, which are removed in the live manifest
+    # NOTE: as the `/descriptor` field doesn't do much, we can just ignore the diffs they create
+    - group: app.k8s.io
+      kind: Application
+      jsonPointers:
+        - /spec/descriptor
+    # kubeflow uses role aggregation so the `/rules` field changes in the live manifest
+    # NOTE: this could cause some issues for ClusterRole not using aggregation
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+      jsonPointers:
+        - /rules
+---
+{{- end }}

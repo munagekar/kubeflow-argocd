@@ -1,0 +1,17 @@
+argo:
+  app_of_apps:
+    # the name of the argo-cd app which targets the root of this repo
+    # Build Env: $ARGOCD_APP_NAME
+    # Example: `kubeflow-apps`
+    name: null
+
+    repo:
+      # the URL of THIS repo
+      # Build Env: $ARGOCD_APP_SOURCE_REPO_URL
+      # Example: `ssh://git@example.org/kubeflow-apps.git`
+      url: null
+
+      # the desired target revision of THIS repo
+      # Build Env: $ARGOCD_APP_SOURCE_TARGET_REVISION
+      # Example: `master` or `v1.1.0`
+      target_revision: null
