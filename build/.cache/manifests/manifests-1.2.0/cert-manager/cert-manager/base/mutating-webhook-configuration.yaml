@@ -24,6 +24,7 @@ webhooks:
           - challenges
           - certificaterequests
     failurePolicy: Fail
+    sideEffects: None
     clientConfig:
       service:
         name: kubernetes
